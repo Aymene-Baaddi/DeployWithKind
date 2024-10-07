@@ -6,7 +6,7 @@ pipeline {
     }
     environment {
         DOCKER_IMAGE = 'react-kind-app:latest'
-        GIT_REPO = 'https://github.com/votre-utilisateur/votre-repo.git' 
+        GIT_REPO = 'https://github.com/Aymene-Baaddi/DeployWithKind' 
         CLUSTER_NAME = 'deployinkind'
     }
     stages {
