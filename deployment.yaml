@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-kind-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: react-kind-app
+  template:
+    metadata:
+      labels:
+        app: react-kind-app
+    spec:
+      containers:
+      - name: react-kind-container
+        image: ${DOCKER_IMAGE}
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "256Mi"  
+            cpu: "500m"
+          limits:
+            memory: "512Mi" 
+            cpu: "1"

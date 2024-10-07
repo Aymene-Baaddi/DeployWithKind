@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: react-kind-app
+spec:
+  type: NodePort  # Vous pouvez changer cela en LoadBalancer si nécessaire
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080  # Port sur lequel le service sera accessible
+  selector:
+    app: react-kind-app
