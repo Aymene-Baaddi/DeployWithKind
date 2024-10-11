@@ -1,15 +1,10 @@
-       
-    pipeline {
+pipeline {
     agent any
 
     environment {
-
         DOCKER_IMAGE = 'deploywithkind'
-        
         DOCKERFILE = 'Dockerfile'
-        
         DEPLOYMENT_NAME = 'deployinkind'
-    }
     }
 
     stages {
@@ -58,4 +53,4 @@
             echo 'Échec du déploiement.'
         }
     }
-
+}
