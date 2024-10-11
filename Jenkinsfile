@@ -1,8 +1,6 @@
 pipeline {
     agent {
-        docker {
-            image 'node:20'
-        }
+        any
     }
     environment {
         DOCKER_IMAGE = 'react-kind-app:latest'
