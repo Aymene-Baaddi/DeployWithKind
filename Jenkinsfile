@@ -11,12 +11,7 @@ pipeline {
         CLUSTER_NAME = 'deployinkind'  
     }
     stages {
-        
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: "${GIT_REPO}"
-            }
-        }
+    
    
         stage('Docker Build') {
             steps {
