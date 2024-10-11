@@ -1,66 +1,50 @@
-pipeline {
-    agent {
-        docker {
-            image 'node:14' 
-            args '-u root' 
-        }
-    }
-    environment {
-        DOCKER_IMAGE = 'your-dockerhub-username/react-kind-app:latest' 
-        GIT_REPO = 'https://github.com/Aymene-Baaddi/DeployWithKind'  
-        CLUSTER_NAME = 'deployinkind'  
-    }
-    stages {
-        
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: "${GIT_REPO}"
-            }
-        }
-   
-        stage('Docker Build') {
-            steps {
-                script {
-                    sh "docker build -t $DOCKER_IMAGE ."
-                }
-            }
-        }
-
-        
-        stage('Docker Login') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
-                    }
-                }
-            }
-        }
-
        
-        stage('Docker Push') {
+    pipeline {
+    agent any
+
+    environment {
+
+        DOCKER_IMAGE = 'deploywithkind'
+        
+        DOCKERFILE = 'Dockerfile'
+        
+        DEPLOYMENT_NAME = 'deployinkind'
+    }
+    }
+
+    stages {
+        stage('Checkout Source Code') {
             steps {
                 script {
-                    sh "docker push $DOCKER_IMAGE"
+                    // Cloner le dépôt Git
+                    git url: 'https://github.com/Aymene-Baaddi/DeployWithKind', branch: 'main'
                 }
             }
         }
 
-        
-        stage('Load to Kind') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    sh "kind load docker-image $DOCKER_IMAGE --name $CLUSTER_NAME"
+                    // Construire l'image Docker
+                    sh "docker build -t ${DOCKER_IMAGE} -f ${DOCKERFILE} ."
                 }
             }
         }
 
-        
-        stage('Deploy to Kubernetes') {
+        stage('Load Image into Kind') {
             steps {
                 script {
-                    sh "kubectl apply -f deployment.yaml"
-                    sh "kubectl apply -f service.yaml"
+                    // Charger l'image Docker dans Kind
+                    sh "kind load docker-image ${DOCKER_IMAGE}"
+                }
+            }
+        }
+
+        stage('Deploy to Kind') {
+            steps {
+                script {
+                    // Appliquer les fichiers de déploiement Kubernetes
+                    sh "kubectl apply -f k8s/deployment.yml"
                 }
             }
         }
@@ -71,7 +55,7 @@ pipeline {
             echo 'Déploiement réussi !'
         }
         failure {
-            echo 'Le déploiement a échoué.'
+            echo 'Échec du déploiement.'
         }
     }
-}
+
