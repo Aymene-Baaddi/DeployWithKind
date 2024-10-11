@@ -1,7 +1,12 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:14' 
+            args '-u root' 
+        }
+    }
     environment {
-        DOCKER_IMAGE = 'baaddi aymene/react-kind-app:latest' 
+        DOCKER_IMAGE = 'your-dockerhub-username/react-kind-app:latest' 
         GIT_REPO = 'https://github.com/Aymene-Baaddi/DeployWithKind'  
         CLUSTER_NAME = 'deployinkind'  
     }
@@ -32,7 +37,7 @@ pipeline {
             }
         }
 
-       
+        
         stage('Docker Login') {
             steps {
                 script {
@@ -52,7 +57,7 @@ pipeline {
             }
         }
 
-       
+        
         stage('Load to Kind') {
             steps {
                 script {
@@ -61,6 +66,7 @@ pipeline {
             }
         }
 
+        
         stage('Deploy to Kubernetes') {
             steps {
                 script {
