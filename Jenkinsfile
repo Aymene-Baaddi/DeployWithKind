@@ -1,16 +1,19 @@
 pipeline {
-     agent any
+    agent any
     environment {
-        DOCKER_IMAGE = 'react-kind-app:latest'
-        GIT_REPO = 'https://github.com/Aymene-Baaddi/DeployWithKind' 
-        CLUSTER_NAME = 'deployinkind'
+        DOCKER_IMAGE = 'baaddi aymene/react-kind-app:latest' 
+        GIT_REPO = 'https://github.com/Aymene-Baaddi/DeployWithKind'  
+        CLUSTER_NAME = 'deployinkind'  
     }
     stages {
+        
         stage('Checkout') {
             steps {
-                git branch: 'main', url: "${GIT_REPO}" 
+                git branch: 'main', url: "${GIT_REPO}"
             }
         }
+
+        
         stage('Build') {
             steps {
                 script {
@@ -19,6 +22,8 @@ pipeline {
                 }
             }
         }
+
+       
         stage('Docker Build') {
             steps {
                 script {
@@ -26,13 +31,36 @@ pipeline {
                 }
             }
         }
-        stage('Push to Kind') {
+
+       
+        stage('Docker Login') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
+                    }
+                }
+            }
+        }
+
+       
+        stage('Docker Push') {
+            steps {
+                script {
+                    sh "docker push $DOCKER_IMAGE"
+                }
+            }
+        }
+
+       
+        stage('Load to Kind') {
             steps {
                 script {
                     sh "kind load docker-image $DOCKER_IMAGE --name $CLUSTER_NAME"
                 }
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
                 script {
@@ -42,6 +70,7 @@ pipeline {
             }
         }
     }
+
     post {
         success {
             echo 'Déploiement réussi !'
