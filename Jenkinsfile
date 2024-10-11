@@ -17,18 +17,7 @@ pipeline {
                 git branch: 'main', url: "${GIT_REPO}"
             }
         }
-
-        
-        stage('Build') {
-            steps {
-                script {
-                    sh 'npm install'
-                    sh 'npm run build'
-                }
-            }
-        }
-
-       
+   
         stage('Docker Build') {
             steps {
                 script {
