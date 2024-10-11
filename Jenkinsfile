@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        any
-    }
+     agent any
     environment {
         DOCKER_IMAGE = 'react-kind-app:latest'
         GIT_REPO = 'https://github.com/Aymene-Baaddi/DeployWithKind' 
